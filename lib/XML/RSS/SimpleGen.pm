@@ -13,7 +13,7 @@ use vars qw(
   @Retry_delays $UserAgentString
 );
 
-$VERSION = '11.10';
+$VERSION = '11.11';
 BEGIN { *DEBUG = sub () {0} unless defined &DEBUG; }   # set DEBUG level
 
 @ISA = qw(Exporter);
@@ -368,8 +368,13 @@ sub item { # Add an item:  (url, title, description)
     # Update history...
     if( $self->{'_first_seen'} ) {
       my $url = $self->{'items'}[-1][0];
-      $self->{'_first_seen'}{$url} ||= time();
-      $self->{'_last_seen' }{$url}   = time();
+      my $now =
+            $self->{'_virgin_item_timestamp'}
+        ? --$self->{'_virgin_item_timestamp'}
+        : time()
+      ;
+      $self->{'_first_seen'}{$url} ||= $now;
+      $self->{'_last_seen' }{$url}   = $now;
     }
 
   } else {
@@ -1049,11 +1054,14 @@ sub _read_history_file {
   $self->{'_first_seen'} = \%first;
   $self->{'_last_seen' } = \%last ;
 
+  unless( -e $hf and -s _ ) {
+    $self->{'_virgin_item_timestamp'} = time() if $DWIM;
+    return 0;
+  }
+
   my $now = time();
   my $forget_before;
   
-  return 0 unless -e $hf and -s _;
-
   my $in;
   {
     local *IN;
