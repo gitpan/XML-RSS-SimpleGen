@@ -13,7 +13,7 @@ use vars qw(
   @Retry_delays $UserAgentString
 );
 
-$VERSION = '11.08';
+$VERSION = '11.09';
 BEGIN { *DEBUG = sub () {0} unless defined &DEBUG; }   # set DEBUG level
 
 @ISA = qw(Exporter);
@@ -199,7 +199,8 @@ sub init { return; }   # override in subclass as necessary
 __PACKAGE__->_accessorize(
  qw(
   title description url language css xsl webMaster docs
-  item_limit ttl retention
+  item_limit ttl
+ retention
   allow_duplicates
   image_title image_link image_url image_width image_height image_description 
  )
@@ -1213,7 +1214,7 @@ sub daily {
   my $self = $_[0];
   $self->updateHours();
   $self->updatePeriod('daily');
-  $self->ttl( 24 * 60 * 60 );
+  $self->ttl( 24 * 60 );
   return;
 }
 
@@ -1222,7 +1223,7 @@ sub twice_daily  {
   my $h = (gmtime( $self->_now_rounded_up ))[2];
   $self->updateHours( $h,  ($h+12) % 24 );
   $self->updatePeriod('daily',2);
-  $self->ttl( 12 * 60 * 60 );
+  $self->ttl( 12 * 60 );
   return;
 }
 
@@ -1231,7 +1232,7 @@ sub thrice_daily  {
   my $h = (gmtime( $self->_now_rounded_up ))[2];
   $self->updateHours( $h,  ($h+ 8) % 24,  ($h+16) % 24 );
   $self->updatePeriod('daily',3);
-  $self->ttl( 8 * 60 * 60 );
+  $self->ttl( 8 * 60 );
   return;
 }
 
@@ -1240,7 +1241,7 @@ sub weekly {
   $self->updateHours();
   $self->updateDays();
   $self->updatePeriod('weekly',1);
-  $self->ttl( 7 * 24 * 60 * 60 );
+  $self->ttl( 7 * 24 * 60 );
   return;
 }
 
@@ -1737,7 +1738,7 @@ these parameters in the call to C<rss_new>.
 =item the accessor C<rss_ttl( I<number> )>
 
 This sets the parameter of this RSS feed's C<ttl> element, which
-suggests how long (in minutes) an RSS reader should wait after it polls
+suggests how long (in minutes, not seconds!) an RSS reader should wait after it polls
 a feed until it polls it again.  For example, C<rss_ttl(90)> would suggest
 that a reader should not poll this feed more often than every 90 minutes.
 
