@@ -1,6 +1,14 @@
 Revision history for Perl extension XML::RSS::SimpleGen
-                                        Time-stamp: "2004-01-24 23:42:40 AST"
+                                        Time-stamp: "2004-01-31 21:36:48 AST"
 
+2004-01-31  Sean M. Burke  sburke@cpna.org
+	* Release 11.10
+	* Previous version failed to correct decimal-entities for Win-lame
+	characters.  (E.g., "&#146;" wasn't getting corrected to
+	"&#8217;", atho its hex version, "&#x93;", was.)
+	Fixed.
+	And added tests to 10_html2xmltext.t for this.
+	
 2004-01-24  Sean M. Burke  sburke@cpan.org
 	* Release 11.09
 	* Previous version generated incorrect ttl figures for rss_daily,

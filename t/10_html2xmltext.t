@@ -2,7 +2,7 @@
 require 5;
 use strict;
 use Test;
-BEGIN { plan tests => 28 }
+BEGIN { plan tests => 32 }
 
 print "# Starting ", __FILE__ , " ...\n";
 ok 1;
@@ -35,12 +35,20 @@ ok z "&#19978;&#194561;&#65292;",
 
 ok z "&#x4e0a;&#x2f801;&#xff0c;",
      "&#x4e0a;&#x2f801;&#xff0c;";
+
 ok z "&#x4E0a;<!-- yorp -->&#x2f801;&#xFF0c;",
      "&#x4E0a;&#x2f801;&#xFF0c;";
+
 
 print "# De-Winification test:\n";
 ok z "€20 ‘could’ be “fun” - No-body",
      '&#8364;20 &#8216;could&#8217; be &#8220;fun&#8221; - No-body';
+ok z "p&#146;yogo!",   "p&#8217;yogo!";
+ok z "p&#0146;yogo!",  "p&#8217;yogo!";
+ok z "p&#x92;yogo!",   "p&#8217;yogo!";
+ok z "p&#x092;yogo!",  "p&#8217;yogo!";
+
+
 
 print "# Tag tests...\n";
 

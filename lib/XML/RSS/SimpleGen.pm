@@ -13,7 +13,7 @@ use vars qw(
   @Retry_delays $UserAgentString
 );
 
-$VERSION = '11.09';
+$VERSION = '11.10';
 BEGIN { *DEBUG = sub () {0} unless defined &DEBUG; }   # set DEBUG level
 
 @ISA = qw(Exporter);
@@ -1916,7 +1916,7 @@ sub html2text {
         &\#
         (?:
           (?: # dec
-            [0-9]{1,7}
+            ([0-9]{1,7})
           )|(?: # or hex
            [xX]([0-9a-fA-F]{1,7})
           )
@@ -1926,18 +1926,23 @@ sub html2text {
       ;?
       @@sx
     ) {
-      DEBUG > 5 and print ":: Numeric ent {$1}\n";
+      DEBUG > 5 and print ":: Numeric ent {$1}",
+         defined($2) ? " (dec $2)" 
+       : defined($3) ? " (hex $3)" 
+       : " (weird!)",
+       "\n";
 
-      if( defined $2 and exists $WinLameEntities{hex($2)} ) {
+      if(      defined $3 and exists $WinLameEntities{hex($3)} ) {
         # it's a winlame ent, in hex
-        DEBUG > 6 and print " Correcting that to &#$WinLameEntities{hex($2)};\n";
-        push @out, \"&#$WinLameEntities{hex($2)};" ;
-      } elsif( exists $WinLameEntities{$1} ) {
+        DEBUG > 6 and print " Correcting that to &#$WinLameEntities{hex($3)};\n";
+        push @out, \"&#$WinLameEntities{hex($3)};" ;
+      } elsif( defined $2 and exists $WinLameEntities{0 + $2} ) {
         # it's a winlame ent, in decimal
-        DEBUG > 6 and print " Correcting that to &#$WinLameEntities{$1};\n";
-        push @out, \"&#$WinLameEntities{$1};"      ;
+        DEBUG > 6 and print " Correcting that to &#$WinLameEntities{0 + $2};\n";
+        push @out, \"&#$WinLameEntities{0 + $2};"  ;
       } else {
         # it's a normal entity
+        DEBUG > 6 and print " Passing it thru as \"$1;\"\n";
         push @out, \"$1;";
       }
       
