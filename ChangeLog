@@ -1,0 +1,7 @@
+Revision history for Perl extension XML::RSS::SimpleGen
+                                        Time-stamp: "2004-01-17 21:15:45 AST"
+
+2004-01-17  Sean M. Burke  sburke@cpan.org
+	* Release 11.08
+	* After many many development versions, this is the first
+	public release.
